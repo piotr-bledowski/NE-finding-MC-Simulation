@@ -19,3 +19,9 @@ class TwoPlayerGame:
 
     def setStrategies(self, strategy1: np.array, strategy2: np.array):
         self.strategies = np.vstack((strategy1, strategy2))
+
+    def expectedPayoffs(self, player: int) -> np.array:
+        opponent = 1 if player == 2 else 2
+        # multiply player's payoffs by respective probability of the opponent playing that action
+        # then sum the rows so that each action of the player has an expected payoff
+        return np.sum(self.payoffs[player-1] * self.strategies[opponent-1], axis=1)
