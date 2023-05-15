@@ -1,3 +1,7 @@
 # NE-finding-MCMC-Simulation
 
-This project implements a Markov Chain Monte Carlo simulation, more specifically the Simulated Annealing method for finding a Nash Equilibrium for any user-defined game.
+This project implements two stochastic methods of finding a Nash Equilibrium of a given 2-player game in normal form.
+
+## 1. Simulated Annealing
+
+## 2. Metropolis-Hastings
