@@ -1,4 +1,4 @@
-# NE-finding-MCMC-Simulation
+# NE-finding-MC-Simulation
 
 This project implements two stochastic methods of finding a Nash Equilibrium of a given 2-player game in normal form.
 
