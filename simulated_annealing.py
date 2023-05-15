@@ -1,3 +1,5 @@
+import numpy as np
+
 from game import TwoPlayerGame
 
 class SimulatedAnnealing:
@@ -9,4 +11,15 @@ class SimulatedAnnealing:
         self.cooling_rate = cooling_rate
 
     def runSimulation(self):
-        pass
+        temp = self.initial_temp
+
+        while temp >= self.final_temp:
+            for _ in range(self.n_epochs):
+                current_cost = self.cost()
+
+    # This can either be standard deviation or variance of opponent's expected payoffs
+    # as Nash Equilibrium occurs when said SD or variance is equal to 0
+    def cost(self) -> float:
+        expected_payoffs1 = self.game.expectedPayoffs(1)
+        expected_payoffs2 = self.game.expectedPayoffs(2)
+        return np.var(expected_payoffs1) + np.var(expected_payoffs2)
