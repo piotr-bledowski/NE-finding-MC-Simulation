@@ -10,6 +10,9 @@ class TwoPlayerGame:
     def getStrategy(self, player: int) -> np.array:
         return self.strategies[player-1]
 
+    def updateStrategy(self, player: int, new_strategy: np.array):
+        self.strategies[player-1] = new_strategy
+
     def getPayoffs(self) -> np.ndarray:
         return self.payoffs
 
