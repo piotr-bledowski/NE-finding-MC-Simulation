@@ -3,10 +3,9 @@ import numpy as np
 from game import TwoPlayerGame
 from helpers import normalize, cost
 from copy import deepcopy
-from numba import jit
 
 class SimulatedAnnealing:
-    def __init__(self, game: TwoPlayerGame, n_epochs: int = 100, initial_temp: float = 100, final_temp: float = 0.01, cooling_rate: float = 0.01, step: str = 'fixed', step_size: float = 0.01):
+    def __init__(self, game: TwoPlayerGame, n_epochs: int = 100, initial_temp: float = 100, final_temp: float = 0.01, cooling_rate: float = 0.01, step: str = 'fixed', step_size: float = 0.001):
         self.game = game
         self.n_epochs = n_epochs
         self.initial_temp = initial_temp
@@ -16,7 +15,6 @@ class SimulatedAnnealing:
         self.step_size = step_size
         self.error = []
 
-    @jit(cache=True)
     def runSimulation(self):
         temp = self.initial_temp
 
@@ -31,8 +29,8 @@ class SimulatedAnnealing:
                 # always accept better states
                 if delta > 0:
                     self.game = next_state
-                # if the new state is worse, accept it with probability derived from current temperature
-                elif np.exp(delta/temp) > np.random.rand():
+                # if the new state is worse, accept it with probability derived from current temperature and change in cost
+                elif 1/(1+np.exp(-delta/temp)) > np.random.rand(): # sigmoid
                     self.game = next_state
             temp -= self.cooling_rate
 
