@@ -1,5 +1,5 @@
 from simulated_annealing import SimulatedAnnealing
-from game import TwoPlayerGame
+from game import TwoPlayerSymmetricGame
 import numpy as np
 from helpers import normalize
 import matplotlib.pyplot as plt
@@ -7,8 +7,7 @@ from helpers import cost, payoff
 
 # po1 = np.array([[2, 77, 48], [42, 73, 26], [67, 86, 11]])
 # po2 = np.array([[2, 42, 67], [77, 73, 86], [48, 26, 11]])
-po1 = np.array([[2, 0], [0, 1]])
-po2 = np.array([[1, 0], [0, 2]])
+payoffs = np.array([[2, 0], [0, 1]])
 s1 = normalize(np.random.rand(2))
 s2 = normalize(np.random.rand(2))
 
@@ -19,7 +18,7 @@ s2 = np.array([0, 1])
 
 print(np.vstack((s1, s2)))
 
-game = TwoPlayerGame(po1, po2, s1, s2)
+game = TwoPlayerSymmetricGame(2, payoffs)
 
 print(payoff(game, s1, s2))
 
