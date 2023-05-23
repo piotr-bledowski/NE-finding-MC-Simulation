@@ -20,9 +20,9 @@ print(np.vstack((s1, s2)))
 
 game = TwoPlayerSymmetricGame(2, payoffs)
 
-print(payoff(game, s1, s2))
+print(payoff(game.payoffs, s1, s2))
 
-print(cost(game, s1))
+print(cost(game.payoffs, game.pureStrategies, s1))
 
 
 

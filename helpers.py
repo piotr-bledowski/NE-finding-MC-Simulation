@@ -1,5 +1,5 @@
 import numpy as np
-from game import TwoPlayerGame
+from game import TwoPlayerSymmetricGame
 
 # Ensuring that an array sums to 1, i.e. is a probability distribution
 def normalize(arr: np.array) -> np.array:
@@ -17,10 +17,10 @@ def normalize(arr: np.array) -> np.array:
 #     return np.var(expected_payoffs1) + np.var(expected_payoffs2)
 
 
-def cost(game: TwoPlayerGame, strat: np.array) -> float:
-    return sum(max([0, payoff(game, p, strat) - payoff(game, strat, strat)])**2 for p in game.pureStrategies)
+def cost(payoffs: np.ndarray, pure_strategies: np.ndarray, strat: np.array) -> float:
+    return sum(max([0, payoff(payoffs, p, strat) - payoff(payoffs, strat, strat)])**2 for p in pure_strategies)
 
 
-def payoff(game: TwoPlayerGame, strategy1: np.array, strategy2: np.array) -> float:
-    payoffs = game.getPayoffs(1) * strategy1 * strategy2.T
+def payoff(payoffs: np.ndarray, strategy1: np.array, strategy2: np.array) -> float:
+    payoffs = payoffs * strategy1 * strategy2.T
     return payoffs.sum()

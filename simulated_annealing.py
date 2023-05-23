@@ -1,11 +1,11 @@
 import numpy as np
 
-from game import TwoPlayerGame
+from game import TwoPlayerSymmetricGame
 from helpers import normalize, cost
 from copy import deepcopy
 
 class SimulatedAnnealing:
-    def __init__(self, game: TwoPlayerGame, n_epochs: int = 100, initial_temp: float = 100, final_temp: float = 0.01, cooling_rate: float = 0.01, step: str = 'fixed', step_size: float = 0.001):
+    def __init__(self, game: TwoPlayerSymmetricGame, n_epochs: int = 100, initial_temp: float = 100, final_temp: float = 0.01, cooling_rate: float = 0.01, step: str = 'fixed', step_size: float = 0.001):
         self.game = game
         self.n_epochs = n_epochs
         self.initial_temp = initial_temp
@@ -38,7 +38,7 @@ class SimulatedAnnealing:
     # 1. taking a step of a fixed size
     # 2. taking a step from a uniform distribution (regular random walk)
     # 3. taking a step from a normal distribution (Gaussian random walk)
-    def nextStep(self) -> TwoPlayerGame:
+    def nextStep(self) -> TwoPlayerSymmetricGame:
         new_game = deepcopy(self.game)
         # randomly choosing a player
         player = np.random.randint(2) + 1
@@ -53,7 +53,7 @@ class SimulatedAnnealing:
         elif self.step == 'normal':
             strategy[action] = np.random.normal(loc=strategy[action], scale=self.step_size)
         strategy = normalize(strategy)
-        new_game.updateStrategy(player, strategy)
+        new_game.updateStrategy(strategy)
         # in case a probability goes below 0
         if strategy[action] < 0:
             return self.game
