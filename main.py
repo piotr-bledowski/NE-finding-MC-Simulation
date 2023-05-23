@@ -3,7 +3,7 @@ from game import TwoPlayerGame
 import numpy as np
 from helpers import normalize
 import matplotlib.pyplot as plt
-from helpers import cost
+from helpers import cost, payoff
 
 # po1 = np.array([[2, 77, 48], [42, 73, 26], [67, 86, 11]])
 # po2 = np.array([[2, 42, 67], [77, 73, 86], [48, 26, 11]])
@@ -12,16 +12,28 @@ po2 = np.array([[1, 0], [0, 2]])
 s1 = normalize(np.random.rand(2))
 s2 = normalize(np.random.rand(2))
 
+s1 = np.array([0, 1])
+s2 = np.array([0, 1])
+
+
+
 print(np.vstack((s1, s2)))
 
 game = TwoPlayerGame(po1, po2, s1, s2)
 
-simulation = SimulatedAnnealing(game, n_epochs=50, initial_temp=5, final_temp=0.01, cooling_rate=0.01, step_size=0.0001, step='normal')
+print(payoff(game, s1, s2))
 
-simulation.runSimulation()
+print(cost(game, s1))
 
-print(simulation.getResult())
-print(cost(simulation.game))
+
+
+#
+# simulation = SimulatedAnnealing(game, n_epochs=50, initial_temp=5, final_temp=0.01, cooling_rate=0.01, step_size=0.0001, step='normal')
+#
+# simulation.runSimulation()
+#
+# print(simulation.getResult())
+# print(cost(simulation.game))
 
 # fig, ax = plt.subplots(nrows=1, ncols=3)
 #

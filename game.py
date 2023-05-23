@@ -4,6 +4,7 @@ class TwoPlayerGame:
     def __init__(self, payoffs1: np.ndarray, payoffs2: np.ndarray, strategy1: np.array, strategy2: np.array):
         self.payoffs = np.stack((payoffs1, payoffs2))
         self.strategies = np.vstack((strategy1, strategy2))
+        self.pureStrategies = np.identity(len(strategy1))
 
     # for readability, I'm indexing players with 1 and 2, hence the -1 below
     def getStrategy(self, player: int) -> np.array:
