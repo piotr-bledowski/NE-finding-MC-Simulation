@@ -20,29 +20,26 @@ class SimulatedAnnealing:
 
         while temp >= self.final_temp:
             for _ in range(self.n_epochs):
-                current_cost = cost(self.game)
+                current_cost = cost(self.game.payoffs[0], self.game.pureStrategies, self.game.strategy)
                 self.error.append(current_cost)
                 # take a step, i.e. change one of the probabilities in one of the players' strategy
-                next_state = self.nextStep()
-                next_cost = cost(next_state)
+                next_strategy = self.nextStep()
+                next_cost = cost(self.game.payoffs[0], self.game.pureStrategies, next_strategy)
                 delta = current_cost - next_cost
                 # always accept better states
                 if delta > 0:
-                    self.game = next_state
+                    self.game.updateStrategy(next_strategy)
                 # if the new state is worse, accept it with probability derived from current temperature and change in cost
                 elif 1/(1+np.exp(-delta/temp)) > np.random.rand(): # sigmoid
-                    self.game = next_state
+                    self.game.updateStrategy(next_strategy)
             temp -= self.cooling_rate
 
     # Three possible approaches here
     # 1. taking a step of a fixed size
     # 2. taking a step from a uniform distribution (regular random walk)
     # 3. taking a step from a normal distribution (Gaussian random walk)
-    def nextStep(self) -> TwoPlayerSymmetricGame:
-        new_game = deepcopy(self.game)
-        # randomly choosing a player
-        player = np.random.randint(2) + 1
-        strategy = new_game.getStrategy(player)
+    def nextStep(self) -> np.array:
+        strategy = self.game.strategy.copy()
         # randomly choose an action
         action = np.random.randint(strategy.size)
         if self.step == 'fixed':
@@ -53,12 +50,11 @@ class SimulatedAnnealing:
         elif self.step == 'normal':
             strategy[action] = np.random.normal(loc=strategy[action], scale=self.step_size)
         strategy = normalize(strategy)
-        new_game.updateStrategy(strategy)
         # in case a probability goes below 0
         if strategy[action] < 0:
-            return self.game
-        return new_game
+            return self.game.strategy
+        return strategy
 
     # return the Nash Equilibrium approximation found
     def getResult(self) -> np.ndarray:
-        return np.vstack((self.game.getStrategy(1), self.game.getStrategy(2)))
+        return self.game.strategy

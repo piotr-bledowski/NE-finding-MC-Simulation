@@ -7,22 +7,38 @@ from helpers import cost, payoff
 
 # po1 = np.array([[2, 77, 48], [42, 73, 26], [67, 86, 11]])
 # po2 = np.array([[2, 42, 67], [77, 73, 86], [48, 26, 11]])
-payoffs = np.array([[2, 0], [0, 1]])
-s1 = normalize(np.random.rand(2))
-s2 = normalize(np.random.rand(2))
+payoffs = np.array([[1, 2, 3], [3, 5, 1], [4, 0, 2]]) * 1000
 
-s1 = np.array([0, 1])
-s2 = np.array([0, 1])
+game = TwoPlayerSymmetricGame(3, payoffs)
+
+simulation = SimulatedAnnealing(game, n_epochs=100, initial_temp=50, final_temp=0.01, cooling_rate=0.01, step_size=0.001, step='normal')
+
+simulation.runSimulation()
+
+print(simulation.getResult())
+print(simulation.error[-1])
+
+
+# fig, ax = plt.subplots()
+#
+# X = np.linspace(0, 1, 100)
+# Y = np.linspace(0, 1, 100)
+#
+# Z = np.array([[cost(game.payoffs[0], game.pureStrategies, np.array([x, y, 1-x-y])) for x in X] for y in Y])
+#
+# ax.contourf(X, Y, Z, levels=np.linspace(0, Z.max(), 1000))
+#
+# plt.show()
 
 
 
-print(np.vstack((s1, s2)))
 
-game = TwoPlayerSymmetricGame(2, payoffs)
 
-print(payoff(game.payoffs, s1, s2))
 
-print(cost(game.payoffs, game.pureStrategies, s1))
+
+
+
+
 
 
 
