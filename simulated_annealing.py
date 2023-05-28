@@ -2,18 +2,29 @@ import numpy as np
 
 from game import TwoPlayerSymmetricGame
 from helpers import normalize, cost
-from copy import deepcopy
 
 class SimulatedAnnealing:
-    def __init__(self, game: TwoPlayerSymmetricGame, n_epochs: int = 100, initial_temp: float = 100, final_temp: float = 0.01, cooling_rate: float = 0.01, step: str = 'fixed', step_size: float = 0.001):
+    def __init__(self,
+                 game: TwoPlayerSymmetricGame,
+                 n_epochs: int = 100,
+                 initial_temp: float = 100,
+                 final_temp: float = 0.01,
+                 cooling_rate: float = 0.01,
+                 temp_reduction: str = 'linear', # either linear or geometric
+                 acceptance_treshold: str = 'sigmoid', # either sigmoid or exp
+                 step: str = 'fixed',
+                 step_size: float = 0.001):
+
         self.game = game
         self.n_epochs = n_epochs
         self.initial_temp = initial_temp
         self.final_temp = final_temp
         self.cooling_rate = cooling_rate
+        self.temp_reduction = temp_reduction
+        self.acceptance_treshold = acceptance_treshold
         self.step = step
         self.step_size = step_size
-        self.error = []
+        self.error = None
 
     def runSimulation(self):
         temp = self.initial_temp
@@ -21,7 +32,7 @@ class SimulatedAnnealing:
         while temp >= self.final_temp:
             for _ in range(self.n_epochs):
                 current_cost = cost(self.game.payoffs[0], self.game.pureStrategies, self.game.strategy)
-                self.error.append(current_cost)
+                self.error = current_cost
                 # take a step, i.e. change one of the probabilities in one of the players' strategy
                 next_strategy = self.nextStep()
                 next_cost = cost(self.game.payoffs[0], self.game.pureStrategies, next_strategy)
@@ -30,13 +41,21 @@ class SimulatedAnnealing:
                 if delta > 0:
                     self.game.updateStrategy(next_strategy)
                 # if the new state is worse, accept it with probability derived from current temperature and change in cost
-                elif 1/(1+np.exp(-delta/temp)) > np.random.rand(): # sigmoid
-                    self.game.updateStrategy(next_strategy)
-            temp -= self.cooling_rate
+                else:
+                    if self.acceptance_treshold == 'sigmoid':
+                        if 1/(1+np.exp(delta / temp)) > np.random.rand():
+                            self.game.updateStrategy(next_strategy)
+                    elif self.acceptance_treshold == 'exp':
+                        if np.exp(delta / temp) > np.random.rand():
+                            self.game.updateStrategy(next_strategy)
+            if self.temp_reduction == 'linear':
+                temp -= self.cooling_rate
+            elif self.temp_reduction == 'geometric':
+                temp *= self.cooling_rate
 
-    # Three possible approaches here
+    # Three possible approaches here:
     # 1. taking a step of a fixed size
-    # 2. taking a step from a uniform distribution (regular random walk)
+    # 2. taking a step from a uniform distribution
     # 3. taking a step from a normal distribution (Gaussian random walk)
     def nextStep(self) -> np.array:
         strategy = self.game.strategy.copy()
