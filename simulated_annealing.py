@@ -1,5 +1,4 @@
 import numpy as np
-
 from game import TwoPlayerSymmetricGame
 from helpers import normalize, cost
 
@@ -42,6 +41,7 @@ class SimulatedAnnealing:
                     self.game.updateStrategy(next_strategy)
                 # if the new state is worse, accept it with probability derived from current temperature and change in cost
                 else:
+                    # Two possible approaches here, it seems like sigmoid usually performs better, but some sources use e^(delta/temp) in simulated annealing
                     if self.acceptance_treshold == 'sigmoid':
                         if 1/(1+np.exp(delta / temp)) > np.random.rand():
                             self.game.updateStrategy(next_strategy)
